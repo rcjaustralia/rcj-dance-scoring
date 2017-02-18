@@ -1,0 +1,121 @@
+<header>
+	<div class="row">
+		<div class="col-sm-4">
+			<h3 id="hostPageTitle" style="margin: 0px;">
+				<span ng-if="action == 'new'">New Division</span>
+				<span ng-if="action == 'edit'">{{division.name}}</span>
+			</h3>
+		</div>
+		<div class="col-sm-4"></div>
+		<div class="col-sm-4 action-buttons">
+		</div>
+	</div>
+</header>
+<form name="divisionForm" ng-submit="submitForm()"  class="form-horizontal" style="padding-top: 20px;" novalidate>
+
+	<div class="form-group">
+		<label for="" class="col-sm-2 control-label">Name</label>
+	    <div class="col-sm-4" ng-class="{ 'has-error' : divisionForm.name.$invalid && divisionForm.name.$dirty }">
+	    	<input type="text" name="name" ng-model="division.name" class="form-control" ng-required="true">
+	    	<p ng-show="divisionForm.name.$invalid && divisionForm.name.$dirty" class="help-block">A name is required.</p>
+	    </div>
+	    <label for="" class="col-sm-2 control-label">Category</label>
+	    <div class="col-sm-4" ng-class="{ 'has-error' : divisionForm.category.$invalid && divisionForm.category.$dirty }">
+	    	<select ng-model="division.category" name="category" ng-options="category for category in categories" class="form-control" ng-required="true">
+		      <option value="">Choose Category</option>
+		    </select>
+		    <p ng-show="divisionForm.category.$invalid && divisionForm.category.$dirty" class="help-block">A category is required.</p>
+	    </div>
+	</div>
+
+	<div class="form-group">
+		<label for="" class="col-sm-2 control-label">Interview Sheet</label>
+		<div class="col-sm-4">
+			<select ng-model="division.interviewSheetTemplate" name="interviewSheetTemplate" ng-options="sheet.id as sheet.description for sheet in interviewSheets" class="form-control">
+				<option value="">Choose Interview Sheet</option>
+			</select>
+		</div>
+		<label for="" class="col-sm-2 control-label">Performance Sheet</label>
+		<div class="col-sm-4">
+			<select ng-model="division.performanceSheetTemplate" name="performanceSheetTemplate" ng-options="sheet.id as sheet.description for sheet in performanceSheets" class="form-control">
+				<option value="">Choose Performance Sheet</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="form-group">
+
+    <label for="" class="col-sm-2 control-label">Division Open</label>
+    <div class="col-sm-4">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" name="enabled" ng-model="division.open">
+        </label>
+      </div>
+    </div>
+
+  </div>
+
+	<header>
+	<div class="row">
+			<div class="col-sm-4">
+				<h3 id="hostPageTitle" style="margin: 0px;">
+					Rounds
+				</h3>
+			</div>
+			<div class="col-sm-4"></div>
+			<div class="col-sm-4 action-buttons">
+				<button type="button" class="btn btn-primary btn-sm pull-right" ng-click="addRound()">
+					<span class="glyphicon glyphicon-plus"></span> Add
+				</button>
+			</div>
+		</div>
+	</header>
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th width="300">Number</th>
+				<th width="100" style="text-align: center;">Is Final</th>
+				<th width="300">Automatic Name</th>
+				<th>Custom Name</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="round in division.rounds" ng-form="roundForm">
+				<td >
+					<input type="number" ng-model="round.order" step="1" ng-required="true" name="number" class="form-control" />
+					<p ng-show="roundForm.number.$invalid && roundForm.number.$dirty" class="help-block">A round number is requried.</p>
+				</td>
+				<td style="text-align: center;">
+					<input type="checkbox" ng-model="round.isFinal">
+				</td>
+				<td>
+					<span ng-if="round.order != null">
+						Round {{round.order}}
+					</span>
+				</td>
+				<td>
+					<input type="text" ng-model="round.customName" name="customName" class="form-control" />
+				</td>
+				<td>
+					<button type="button" class="btn btn-danger btn-sm pull-right" ng-click="removeRound(round)">
+						<span class="glyphicon glyphicon-minus"></span> Remove
+					</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="form-group">
+		<div class="col-sm-2 col-sm-offset-10 text-right">
+			<button type="button" class="btn btn-primary btn-sm" ng-click="back()" >
+		    	<span class="glyphicon glyphicon-remove"></span>
+			    Cancel
+		    </button>
+		    <button type="submit" ng-disabled="divisionForm.$invalid" class="btn btn-primary btn-sm" >
+		    	<span class="glyphicon glyphicon-ok"></span>
+			    Save
+		    </button>
+		</div>
+	</div>
+</form>

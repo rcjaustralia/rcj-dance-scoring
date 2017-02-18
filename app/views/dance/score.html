@@ -1,0 +1,84 @@
+<header>
+	<div class="row">
+		<div class="col-sm-4">
+			<h3 id="hostPageTitle" style="margin: 0px;">
+				Dance Performance
+			</h3>
+		</div>
+		<div class="col-sm-4"></div>
+		<div class="col-sm-4 action-buttons">
+		</div>
+	</div>
+</header>
+<form name="scoreForm" ng-submit="submitForm()"  class="form-horizontal" style="padding-top: 20px;" novalidate>
+
+	<div class="form-group">
+		<label for="" class="col-sm-2 control-label">Team</label>
+		<div class="col-sm-4" ng-class="{ 'has-error' : scoreForm.team.$invalid && scoreForm.team.$dirty }">
+			<select ng-model="scoreSheet.team" name="team" ng-options="team.id as (team.name + ' (' + team.school + ')') for team in teams" class="form-control" ng-required="true">
+				<option value="">Choose Team</option>
+			</select>
+			<p ng-show="scoreForm.team.$invalid && scoreForm.team.$dirty" class="help-block">A team is required.</p>
+		</div>
+		<span ng-if="scoreSheet.scoreType == 2">
+	    <label for="" class="col-sm-2 control-label">Round</label>
+	    <div class="col-sm-4" ng-class="{ 'has-error' : scoreForm.round.$invalid && scoreForm.round.$dirty }">
+	    	<select ng-model="scoreSheet.round" name="round" ng-options="round.id as round.name for round in division.rounds" class="form-control" ng-required="true">
+		      <option value="">Choose Round</option>
+		    </select>
+		    <p ng-show="scoreForm.round.$invalid && scoreForm.round.$dirty" class="help-block">A round is required.</p>
+	    </div>
+		</span>
+
+	</div>
+
+	<div class="form-group">
+	    <label for="" class="col-sm-2 control-label">Comments</label>
+	    <div class="col-sm-10">
+	    	<textarea class="form-control" rows="3" ng-model="scoreSheet.comments"></textarea>
+	    </div>
+	</div>
+
+	<div class="form-group">
+		<span ng-repeat="timing in scoreSheet.timings">
+			<label for="" class="col-sm-2 control-label">{{timing.name}}</label>
+			<div class="col-sm-2">
+	    	<input type="text" class="form-control" ng-model="timing.value" />
+	    </div>
+		</span>
+	</div>
+
+
+	<div class="form-group" ng-repeat="section in scoreSheet.sections">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>{{section.description}}</th>
+					<th width="500">Totals</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="score in section.scores" ng-include="'views/dance/criteria.html'">
+				</tr>
+				<tr>
+					<td colspan="2" style="text-align: right">
+						<strong>Section Total</strong>: {{sectionTotal(section)}}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-2 col-sm-offset-10 text-right">
+			<button type="button" class="btn btn-primary btn-sm" ng-click="back()" >
+		    	<span class="glyphicon glyphicon-remove"></span>
+			    Cancel
+		    </button>
+		    <button type="submit" ng-disabled="scoreForm.$invalid" class="btn btn-primary btn-sm" >
+		    	<span class="glyphicon glyphicon-ok"></span>
+			    Save
+		    </button>
+		</div>
+	</div>
+
+</form>

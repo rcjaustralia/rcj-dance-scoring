@@ -1,0 +1,47 @@
+<header>
+	<div class="row">
+		<div class="col-sm-4">
+			<h3 id="hostPageTitle" style="margin: 0px;">
+				<span ng-if="action == 'new'">New User</span>
+				<span ng-if="action == 'edit'">{{userobj.name}}</span>
+			</h3>
+		</div>
+		<div class="col-sm-4"></div>
+		<div class="col-sm-4 action-buttons">
+		</div>
+	</div>
+</header>
+<form name="userForm" ng-submit="submitForm()"  class="form-horizontal" style="padding-top: 20px;" novalidate>
+	<div class="form-group">
+		<label for="" class="col-sm-2 control-label">Name</label>
+	    <div class="col-sm-4" ng-class="{ 'has-error' : userForm.name.$invalid && userForm.name.$dirty }">
+	    	<input type="text" name="name" ng-model="userObj.name" class="form-control" ng-required="true">
+	    	<p ng-show="userForm.name.$invalid && userForm.name.$dirty" class="help-block">A name is required.</p>
+	    </div>
+	    <label for="" class="col-sm-2 control-label">Username</label>
+	    <div class="col-sm-4" ng-class="{ 'has-error' : userForm.username.$invalid && userForm.username.$dirty }">
+	    	<input type="text" name="username" ng-model="userObj.username" class="form-control" ng-required="true">
+	    	<p ng-show="userForm.username.$invalid && userForm.username.$dirty" class="help-block">A username is required.</p>
+	    </div>
+	</div>
+	<div class="form-group">
+		<label for="" class="col-sm-2 control-label">Password</label>
+	    <div class="col-sm-4" ng-class="{ 'has-error' : userForm.password.$invalid && userForm.password.$dirty }">
+	    	<input type="password" name="password" ng-model="userObj.password" class="form-control" ng-required="true">
+	    	<p ng-show="userForm.password.$invalid && userForm.password.$dirty" class="help-block">A password is required.</p>
+	    </div>
+	</div>
+	<header>
+	<div class="form-group">
+		<div class="col-sm-2 col-sm-offset-10 text-right">
+			<button type="button" class="btn btn-primary btn-sm" ng-click="back()" >
+		    	<span class="glyphicon glyphicon-remove"></span>
+			    Cancel
+		    </button>
+		    <button type="submit" ng-disabled="teamForm.$invalid" class="btn btn-primary btn-sm" >
+		    	<span class="glyphicon glyphicon-ok"></span>
+			    Save
+		    </button>
+		</div>
+	</div>
+</form>

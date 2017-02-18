@@ -1,0 +1,19 @@
+version: '2'
+services:
+
+  rethinkdb:
+    image: rethinkdb:2.3.4
+    ports:
+      - 3737:8080
+    labels:
+      triton.cns.services: "robocuprethinkdb"
+
+  dance:
+    build: .
+    ports:
+      - 3000:3000
+    links:
+      - rethinkdb
+    volumes:
+      - ./:/usr/src/app
+

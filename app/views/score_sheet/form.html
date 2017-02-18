@@ -1,0 +1,167 @@
+<header>
+	<div class="row">
+		<div class="col-sm-4">
+			<h3 id="hostPageTitle" style="margin: 0px;">
+				<span ng-if="action == 'new'">New Score Sheet</span>
+				<span ng-if="action == 'edit'">{{scoreSheet.name}}</span>
+			</h3>
+		</div>
+		<div class="col-sm-4"></div>
+		<div class="col-sm-4 action-buttons">
+		</div>
+	</div>
+</header>
+<form name="scoreSheetForm" ng-submit="submitForm()"  class="form-horizontal" style="padding-top: 20px;" novalidate>
+	<div class="form-group">
+		<label for="description" class="col-sm-2 control-label">Name</label>
+
+	    <div class="col-sm-4" ng-class="{ 'has-error' : scoreSheetForm.description.$invalid && scoreSheetForm.description.$dirty }">
+	    	<input type="text" name="description" ng-model="scoreSheet.description" class="form-control" ng-required="true">
+	    	<p ng-show="scoreSheet.description.$invalid && scoreSheet.description.$dirty" class="help-block">A description is required.</p>
+	    </div>
+
+	    <label for="sheetType" class="col-sm-2 control-label">Sheet Type</label>
+	    <div class="col-sm-4" ng-class="{ 'has-error' : scoreSheet.sheetType.$invalid && scoreSheet.sheetType.$dirty }">
+	    	<select ng-model="scoreSheet.sheetType" name="sheetType" ng-options="sheetType.typeNumber as sheetType.name for sheetType in sheetTypes" class="form-control" ng-required="true">
+		      <option value="">Choose Sheet Type</option>
+		    </select>
+		    <p ng-show="scoreSheet.sheetType.$invalid && scoreSheet.sheetType.$dirty" class="help-block">A sheet type is required.</p>
+	    </div>
+
+	</div>
+  <div class="form-group">
+
+    <label for="" class="col-sm-2 control-label">Enabled</label>
+    <div class="col-sm-4">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" name="enabled" ng-model="scoreSheet.enabled">
+        </label>
+      </div>
+    </div>
+
+  </div>
+
+
+	<header>
+	<div class="row">
+			<div class="col-sm-4">
+				<h3 id="hostPageTitle" style="margin: 0px;">
+					Timings
+				</h3>
+			</div>
+			<div class="col-sm-4"></div>
+			<div class="col-sm-4 action-buttons">
+			</div>
+		</div>
+	</header>
+
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th colspan="2">
+					<div class="row">
+						<div class="col-sm-8">
+              <input type="text" ng-model="newTimingText" class="form-control" >
+            </div>
+						<div class="col-sm-4 action-buttons">
+              <button type="button" class="btn btn-primary btn-sm pull-right" ng-click="addTiming(newTimingText)">
+      					<span class="glyphicon glyphicon-plus"></span> Add
+      				</button>
+            </div>
+					</div>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="timing in scoreSheet.timings">
+				<td>
+					{{timing}}
+				</td>
+				<td>
+					<button type="button" class="btn btn-danger btn-sm pull-right" ng-click="removeTiming(timing)">
+						<span class="glyphicon glyphicon-minus"></span> Remove
+					</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<header>
+	<div class="row">
+			<div class="col-sm-4">
+				<h3 id="hostPageTitle" style="margin: 0px;">
+					Sections
+				</h3>
+			</div>
+			<div class="col-sm-4"></div>
+			<div class="col-sm-4 action-buttons">
+				<button type="button" class="btn btn-primary btn-sm pull-right" ng-click="addSection()">
+					<span class="glyphicon glyphicon-plus"></span> Add
+				</button>
+			</div>
+		</div>
+	</header>
+
+  <table class="table table-hover" ng-repeat="section in scoreSheet.sections">
+    <thead>
+      <tr>
+        <th colspan="4">
+          <div class="row">
+            <div class="col-sm-8">
+              <input type="text" name="description" ng-model="section.description" class="form-control" ng-required="true">
+            </div>
+            <div class="col-sm-4 action-buttons">
+              <button type="button" class="btn btn-danger btn-sm pull-right" ng-click="removeSection(section)">
+    						<span class="glyphicon glyphicon-minus"></span> Remove
+    					</button>
+              <button type="button" class="btn btn-primary btn-sm pull-right" ng-click="addCriteria(section)">
+      					<span class="glyphicon glyphicon-plus"></span> Add Criteria
+      				</button>
+            </div>
+          </div>
+        </th>
+      </tr>
+      <tr>
+        <th>Criteria</th>
+        <th>Guide</th>
+        <th>Max Score</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="criteria in section.criteria" ng-form="criteriaForm">
+        <td>
+          <input type="text" ng-model="criteria.description" ng-required="true" name="description" class="form-control" />
+					<p ng-show="criteriaForm.description.$invalid && criteriaForm.description.$dirty" class="help-block">A description is requried.</p>
+        </td>
+        <td>
+          <input type="text" ng-model="criteria.guide" name="guide" class="form-control" />
+        </td>
+        <td >
+					<input type="number" ng-model="criteria.maxValue" step="0.5" ng-required="true" name="maxValue" class="form-control" />
+					<p ng-show="criteriaForm.maxValue.$invalid && criteriaForm.maxValue.$dirty" class="help-block">A max score is requried.</p>
+				</td>
+        <td>
+					<button type="button" class="btn btn-danger btn-sm pull-right" ng-click="removeCriteria(section, criteria)">
+						<span class="glyphicon glyphicon-minus"></span> Remove
+					</button>
+				</td>
+      </tr>
+    </tbody>
+  </table>
+
+	<div class="form-group">
+		<div class="col-sm-2 col-sm-offset-10 text-right">
+			<button type="button" class="btn btn-primary btn-sm" ng-click="back()" >
+		    	<span class="glyphicon glyphicon-remove"></span>
+			    Cancel
+		    </button>
+		    <button type="submit" ng-disabled="scoreSheetForm.$invalid" class="btn btn-primary btn-sm" >
+		    	<span class="glyphicon glyphicon-ok"></span>
+			    Save
+		    </button>
+		</div>
+	</div>
+
+</form>

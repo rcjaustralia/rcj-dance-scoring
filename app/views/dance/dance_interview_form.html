@@ -1,0 +1,56 @@
+<header>
+	<div class="row">
+		<div class="col-sm-4">
+			<h3 id="hostPageTitle" style="margin: 0px;">
+				Dance Interview
+			</h3>
+		</div>
+		<div class="col-sm-4"></div>
+		<div class="col-sm-4 action-buttons">
+		</div>
+	</div>
+</header>
+<form name="interviewForm" ng-submit="submitForm()"  class="form-horizontal" style="padding-top: 20px;" novalidate>
+	<div class="form-group">
+	    <label for="" class="col-sm-2 control-label">Team</label>
+	    <div class="col-sm-4" ng-class="{ 'has-error' : interviewForm.team.$invalid && interviewForm.team.$dirty }">
+	    	<select ng-model="interview.team" name="team" ng-options="team.id as (team.name + ' (' + team.school + ')') group by team.division.name for team in teams" class="form-control" ng-required="true">
+		      <option value="">Choose Team</option>
+		    </select>
+		    <p ng-show="interviewForm.team.$invalid && interviewForm.team.$dirty" class="help-block">A team is required.</p>
+	    </div>
+
+	    <label for="" class="col-sm-2 control-label">Comments</label>
+	    <div class="col-sm-4">
+	    	<textarea class="form-control" rows="3" ng-model="interview.comments"></textarea>
+	    </div>
+
+	</div>
+	<div class="form-group" ng-repeat="section in criteriaItems">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>{{section.sectionTitle}}</th>
+					<th width="500">Totals</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="criteria in section.items" ng-include="'views/dance/criteria.html'">
+
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-2 col-sm-offset-10 text-right">
+			<button type="button" class="btn btn-primary btn-sm" ng-click="back()" >
+		    	<span class="glyphicon glyphicon-remove"></span>
+			    Cancel
+		    </button>
+		    <button type="submit" ng-disabled="interviewForm.$invalid" class="btn btn-primary btn-sm" >
+		    	<span class="glyphicon glyphicon-ok"></span>
+			    Save
+		    </button>
+		</div>
+	</div>
+</form>

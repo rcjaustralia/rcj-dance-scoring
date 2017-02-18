@@ -1,0 +1,82 @@
+<header>
+	<div class="row">
+		<div class="col-sm-4">
+			<h3 id="hostPageTitle" style="margin: 0px;">
+				My Submissions
+			</h3>
+		</div>
+	</div>
+</header>
+<div class="row">
+	<div class="col-md-12" >
+		<div class="row">
+			<div class="col-md-12">
+				<h4 id="hostPageTitle" style="margin: 0px;">
+					Interviews
+				</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Team Name</th>
+							<th>Division</th>
+							<th>Score</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="interview in interviews">
+							<td>
+								<a href="#/dance/{{interview.division.id}}/score/{{interview.id}}/edit">{{interview.id}}</a>
+							</td>
+							<td>
+								<a href="#/admin/team/{{interview.team.id}}">{{interview.team.name}}</a>
+							</td>
+							<td>{{interview.division.name}} {{interview.division.category}}</td>
+							<td>{{interview.total}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<h4 id="hostPageTitle" style="margin: 0px;">
+					Performances
+				</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Team Name</th>
+							<th>Division</th>
+							<th>Round</th>
+							<th>Score</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="performance in performances">
+
+							<td>
+								<a href="#/dance/{{performance.division.id}}/score/{{performance.id}}/edit">{{performance.id}}</a>
+							</td>
+							<td>
+								<a href="#/admin/team/{{performance.team.id}}">{{performance.team.name}}</a>
+							</td>
+							<td>{{performance.division.name}} {{performance.division.category}}</td>
+							<td>{{getRound(performance)}}</td>
+							<td>{{performance.total}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

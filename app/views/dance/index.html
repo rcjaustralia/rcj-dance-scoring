@@ -1,0 +1,73 @@
+<header>
+	<div class="row">
+		<div class="col-sm-12">
+			<h3 id="hostPageTitle" style="margin: 0px;">
+				Dance
+			</h3>
+		</div>
+	</div>
+</header>
+<div class="row">
+	<div class="col-md-12" ng-repeat="division in danceResults">
+		<div class="row">
+
+			<div class="col-md-8">
+				<h4 id="hostPageTitle" style="margin: 0px;">
+					{{division.category}} {{division.name}}
+				</h4>
+			</div>
+
+			<div class="col-md-4 action-buttons">
+				<a class="btn btn-primary btn-sm pull-right" href="#/dance/{{division.id}}/score/{{division.performanceSheetTemplate}}/new" ng-if="category == 'dance'">
+					<span class="glyphicon glyphicon-plus"></span> New Performance
+				</a>
+				<a class="btn btn-primary btn-sm pull-right" href="#/dance/{{division.id}}/score/{{division.interviewSheetTemplate}}/new" ng-if="category == 'dance'">
+					<span class="glyphicon glyphicon-plus"></span> New Interview
+				</a>
+				<a class="btn btn-primary btn-sm pull-right" href="/division/{{division.id}}/export">
+					<span class="glyphicon glyphicon-plus"></span> Export
+				</a>
+			</div>
+
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Team Name</th>
+							<th ng-repeat="round in division.rounds" width="90">
+								<span ng-if="!round.isFinal">
+									Round {{round.order}}
+								</span>
+								<span ng-if="round.isFinal">
+									Final {{round.order}}
+								</span>
+							</th>
+							<th>Interview Score</th>
+							<th>Best Round Score</th>
+							<th>Overall</th>
+							<th>Final Round Score</th>
+							<th>Final Score</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="entry in division.ladder">
+							<td><a href="#/{{category}}/team/{{entry.team['id']}}">{{entry.team.name}} ({{entry.team.school}})</a></td>
+							<td ng-repeat="round in division.rounds">
+								{{roundMatch(entry, round)}}
+							</td>
+							<td>
+								{{entry.interviewScore.toFixed(2)}} ({{entry.interviewCount}})
+							</td>
+							<td>{{entry.performanceScore.toFixed(2)}}</td>
+							<td>{{entry.overallScore.toFixed(2)}}</td>
+							<td>{{entry.finalScore.toFixed(2)}}</td>
+							<td>{{entry.overallFinalScore.toFixed(2)}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
