@@ -1,0 +1,258 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rethinkdb
+  labels:
+    name: rethinkdb
+spec:
+  clusterIP: None
+  ports:
+    - name: web-ui
+      port: 8080
+      targetPort: web-ui
+    - name: client
+      port: 28015
+      targetPort: client
+    - name: cluster
+      port: 29015
+      targetPort: cluster
+  selector:
+    app: rethinkdb
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: rethinkdb
+spec:
+  serviceName: rethinkdb
+  replicas: 1
+  template: 
+    metadata:
+      labels:
+        app: rethinkdb
+      annotations:
+        pod.beta.kubernetes.io/init-containers: '[
+          {
+            "name":"init-rethinkdb-config",
+            "image":"busybox",
+            "command":["sh", "-c", "touch /etc/rethinkdb/rethinkdb.conf; if [ $(hostname | grep -o \"[0-9]\\+\") -ne \"0\" ]; then echo \"join=rethinkdb-0.rethinkdb.default.svc.cluster.local:29015;\" > /etc/rethinkdb/rethinkdb.conf; fi;"],
+            "volumeMounts": [
+              {"name": "conf", "mountPath": "/etc/rethinkdb"}
+            ]
+          }
+        ]'
+    spec:
+      containers:
+      - name: rethinkdb
+        image: rethinkdb:2.3.5
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+        livenessProbe:
+          tcpSocket:
+            port: client
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        args:
+          - "rethinkdb"
+          - "--config-file"
+          - "/etc/rethinkdb/rethinkdb.conf"
+          - "--bind"
+          - "all"
+        ports:
+          - containerPort: 8080
+            name: web-ui
+          - containerPort: 28015
+            name: client
+          - containerPort: 29015
+            name: cluster
+        volumeMounts:
+          - name: rethinkdb-persistent
+            mountPath: /data
+          - name: conf
+            mountPath: /etc/rethinkdb
+      volumes:
+        - name: conf
+          emptyDir: {}
+        - name: rethinkdb-persistent
+  volumeClaimTemplates:
+    - metadata:
+        name: rethinkdb-persistent
+        annotations:
+          storageClassName: "standard"
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: robocup-dance
+  labels:
+    name: robocup-dance
+spec:
+  ports:
+    - name: service
+      port: 3000
+      targetPort: service
+  selector:
+    app: robocup-dance
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-ingress
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: default-http-backend
+  namespace: nginx-ingress
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: default-http-backend
+    spec:
+      containers:
+      - name: default-http-backend
+        image: gcr.io/google_containers/defaultbackend:1.0
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: 10m
+            memory: 20Mi
+          requests:
+            cpu: 10m
+            memory: 20Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: default-http-backend
+  namespace: nginx-ingress
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: default-http-backend
+---
+apiVersion: v1
+data:
+  proxy-connect-timeout: "15"
+  proxy-read-timeout: "600"
+  proxy-send-timeout: "600"
+  hsts-include-subdomains: "false"
+  body-size: "64m"
+  server-name-hash-bucket-size: "256"
+kind: ConfigMap
+metadata:
+  namespace: nginx-ingress
+  name: nginx-ingress-controller
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: nginx-ingress
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: gcr.io/google_containers/nginx-ingress-controller:0.9.0-beta.12
+        name: nginx
+        imagePullPolicy: Always
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 10254
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        ports:
+        - containerPort: 80
+          hostPort: 80
+        - containerPort: 443
+          hostPort: 443
+        args:
+        - /nginx-ingress-controller
+        - --default-backend-service=nginx-ingress/default-http-backend
+        - --configmap=nginx-ingress/nginx-ingress-controller
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: dance-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+    - host: dance.dev
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: robocup-dance
+              servicePort: 3000
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: robocup-dance
+spec:
+  replicas: 1
+  template: 
+    metadata:
+      labels:
+        app: robocup-dance
+    spec:
+      containers:
+      - name: robocup-dance
+        imagePullPolicy: Always
+        image: davefinster/rcja-dance:latest
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+        ports:
+          - containerPort: 3000
+            name: service

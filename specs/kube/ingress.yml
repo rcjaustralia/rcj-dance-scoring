@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: dance-scoring-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+    - hosts:
+      - dance.dmf.zone
+  rules:
+    - host: mapi.kube.development.docketbook.io
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: mapi
+              servicePort: 8080

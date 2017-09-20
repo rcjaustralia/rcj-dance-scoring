@@ -4,3 +4,4 @@ dist
 .DS_Store
 build
 npm-debug.log
+service_account.json

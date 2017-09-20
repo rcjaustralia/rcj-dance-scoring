@@ -22,7 +22,7 @@
 
 	    <label for="sheetType" class="col-sm-2 control-label">Sheet Type</label>
 	    <div class="col-sm-4" ng-class="{ 'has-error' : scoreSheet.sheetType.$invalid && scoreSheet.sheetType.$dirty }">
-	    	<select ng-model="scoreSheet.sheetType" name="sheetType" ng-options="sheetType.typeNumber as sheetType.name for sheetType in sheetTypes" class="form-control" ng-required="true">
+	    	<select ng-model="selectedSheetType" name="sheetType" ng-options="sheetType as sheetType.name for sheetType in sheetTypes track by sheetType.id" class="form-control" ng-required="true">
 		      <option value="">Choose Sheet Type</option>
 		    </select>
 		    <p ng-show="scoreSheet.sheetType.$invalid && scoreSheet.sheetType.$dirty" class="help-block">A sheet type is required.</p>

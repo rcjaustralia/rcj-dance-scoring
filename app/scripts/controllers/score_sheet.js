@@ -15,12 +15,13 @@ angular.module('robocupApp')
 }]).controller('ScoreSheetFormCtrl', ['$scope', 'Restangular', '$state', 'userRepository', function ($scope, Restangular, $state, userRepository) {
 		$scope.user = {};
 		$scope.sheetTypes = [{
-			typeNumber: 1,
+			id: 1,
 			name: 'Interview'
 		},{
-			typeNumber: 2,
+			id: 2,
 			name: 'Performance'
 		}];
+		$scope.selectedSheetType = null;
 		$scope.action = $state.current.data.action;
 		userRepository.getUser().then(function(userObject){
 			$scope.user = userObject;
@@ -35,6 +36,7 @@ angular.module('robocupApp')
 		}else{
 			$scope.scoreSheetEndpoint.one($state.params.scoreSheetId).get().then(function(scoreSheet){
 				$scope.scoreSheet = scoreSheet;
+				$scope.selectedSheetType = $scope.sheetTypes[$scope.scoreSheet.sheetType - 1];
 			}, function(err){
 
 			});
@@ -72,6 +74,7 @@ angular.module('robocupApp')
 		}
 
 		$scope.save = function(){
+			$scope.scoreSheet.sheetType = $scope.selectedSheetType.id
 			if ( $scope.action == 'edit' ){
 				$scope.scoreSheetEndpoint.one($state.params.scoreSheetId).customPUT($scope.scoreSheet).then(function(result){
 					$scope.back();

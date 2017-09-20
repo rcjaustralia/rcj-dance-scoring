@@ -22,8 +22,8 @@
             <strong style="color: red">Unable to Reach Server</strong>
           </a>
         </li>
-        <li><a href="/logout">{{user.name}}</a></li>
-        <li><a href="#/admin">Admin</a></li>
+        <li><a href="/logout">{{user.name}} (Logout)</a></li>
+        <li><a href="#/admin" ng-if="user.isAdmin">Admin</a></li>
     </ul>
     </div>
 </div>

@@ -56,8 +56,8 @@ exports.list = function(req, res){
     if ( req.query.team != null ){
       query = query.filter(r.row("team").eq(req.query.team));
     }
-    if ( req.query.user != null ){
-      query = query.filter(r.row("user").eq(req.query.user));
+    if ( !req.currentUser.isAdmin ) {
+      query = query.filter(r.row("user").eq(req.currentUser.id));
     }
     if ( req.query.detailed == 'true' ){
       query = query.getJoin({

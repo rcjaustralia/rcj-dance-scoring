@@ -23,6 +23,7 @@ exports.list = function(req, res){
 function populateScoreSheetTemplate(modelObject, payload){
   modelObject.description = payload.description;
   modelObject.enabled = payload.enabled;
+  modelObject.sheetType = payload.sheetType;
   modelObject.sections.splice(0, modelObject.sections.length);
   for ( var i = 0; i < payload.sections.length; i++ ){
     var sectionPayload = payload.sections[i];

@@ -9,6 +9,7 @@ angular.module('robocupApp')
 		});
 
     $scope.scoreSheet = null;
+    $scope.title = "";
     $scope.teamEndpoint = Restangular.all('team');
     $scope.divisionEndpoint = Restangular.all('division');
 		$scope.scoreSheetEndpoint = Restangular.all('score_sheet');
@@ -60,7 +61,12 @@ angular.module('robocupApp')
 
     if ( $scope.action == 'new' ){
       $scope.scoreSheetEndpoint.one($state.params.scoreSheetTemplateId).get().then(function(scoreSheetTemplate){
-  			$scope.scoreSheetTemplate = scoreSheetTemplate;
+      	if (scoreSheetTemplate.sheetType === 1) {
+  			$scope.title = "Dance Interview"
+      	} else if (scoreSheetTemplate.sheetType === 2) {
+  			$scope.title = "Dance Performance"
+      	}
+      	$scope.scoreSheetTemplate = scoreSheetTemplate;
         $scope.scoreSheet = {
         	id: $scope.getUuid(),
           sections:[],
