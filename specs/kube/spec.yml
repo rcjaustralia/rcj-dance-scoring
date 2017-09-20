@@ -93,8 +93,60 @@ spec:
         resources:
           requests:
             storage: 20Gi
-  ---
-  apiVersion: v1
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: robocup-dance
+spec:
+  replicas: 1
+  template: 
+    metadata:
+      labels:
+        app: robocup-dance
+    spec:
+      containers:
+      - name: robocup-dance
+        imagePullPolicy: Always
+        image: davefinster/rcja-dance:latest
+        env:
+          - name: ENVIRONMENT
+            value: "production"
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+        ports:
+          - containerPort: 3000
+            name: service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: robocup-dance
+  labels:
+    name: robocup-dance
+spec:
+  ports:
+    - name: service
+      port: 3000
+      targetPort: service
+  selector:
+    app: robocup-dance
+---
+apiVersion: v1
 kind: Namespace
 metadata:
   name: nginx-ingress
@@ -270,51 +322,18 @@ spec:
           initialDelaySeconds: 5
           timeoutSeconds: 1
 ---
-apiVersion: apps/v1beta1
-kind: Deployment
+apiVersion: extensions/v1beta1
+kind: Ingress
 metadata:
-  name: robocup-dance
+  name: dance-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
 spec:
-  replicas: 1
-  template: 
-    metadata:
-      labels:
-        app: robocup-dance
-    spec:
-      containers:
-      - name: robocup-dance
-        imagePullPolicy: Always
-        image: davefinster/rcja-dance:latest
-        livenessProbe:
-          httpGet:
-            path: /ping
-            port: 3000
-          initialDelaySeconds: 10
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /ping
-            port: 3000
-          initialDelaySeconds: 10
-          periodSeconds: 10
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "50m"
-        ports:
-          - containerPort: 3000
-            name: service
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: robocup-dance
-  labels:
-    name: robocup-dance
-spec:
-  ports:
-    - name: service
-      port: 3000
-      targetPort: service
-  selector:
-    app: robocup-dance
+  rules:
+    - host: rcjadance.dmf.zone
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: robocup-dance
+              servicePort: 3000
