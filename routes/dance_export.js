@@ -197,7 +197,7 @@ function generateLadderSheetForDivision(division, workbook){
 function generateSheetForTeams(team, division, tempPath) {
 	return Promise.try(() => {
 		let xlsx = officegen ( 'xlsx' );
-		generateLadderSheetForDivision(division, xlsx);
+		//generateLadderSheetForDivision(division, xlsx);
 		generateInterviewSheetForTeam(team, xlsx);
 		for ( let i = 0; i < division.rounds.length; i++ ){
 			generatePerformanceSheetForTeamInRound(team, division.rounds[i], xlsx);
