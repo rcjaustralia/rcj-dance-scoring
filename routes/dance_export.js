@@ -9,6 +9,7 @@ const targz = require('tar.gz');
 const temp = Promise.promisifyAll(require('temp'));
 const r = model.r;
 
+
 function generateInterviewSheetForTeam(team, workbook){
 	var interviewSheet = workbook.makeNewSheet();
 	interviewSheet.name = 'Interviews';
@@ -197,12 +198,12 @@ function generateLadderSheetForDivision(division, workbook){
 function generateSheetForTeams(team, division, tempPath) {
 	return Promise.try(() => {
 		let xlsx = officegen ( 'xlsx' );
-		//generateLadderSheetForDivision(division, xlsx);
+		generateLadderSheetForDivision(division, xlsx);
 		generateInterviewSheetForTeam(team, xlsx);
 		for ( let i = 0; i < division.rounds.length; i++ ){
 			generatePerformanceSheetForTeamInRound(team, division.rounds[i], xlsx);
 		}
-		let fileName = team.name + '.xls';
+		let fileName = team.name + '.xlsx';
 		let finalPath = path.join(tempPath, fileName);
 		let out = fs.createWriteStream ( finalPath );
 		let promiseObj = promisify(out, {

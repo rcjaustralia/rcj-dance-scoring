@@ -40,7 +40,7 @@
     "method-override": "^2.3.6",
     "morgan": "^1.7.0",
     "node-uuid": "1.4.7*",
-    "officegen": "0.2.11",
+    "officegen": "0.4.5",
     "serve-static": "^1.11.1",
     "thinky": "^2.3.4",
     "uuid":"*",
